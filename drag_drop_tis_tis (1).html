@@ -1,0 +1,471 @@
+<!DOCTYPE html>
+<html lang="el">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ταξινόμηση: της - τις</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .container {
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            max-width: 1000px;
+            width: 100%;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+        }
+
+        h1 {
+            text-align: center;
+            color: #667eea;
+            margin-bottom: 10px;
+            font-size: 32px;
+        }
+
+        .instructions {
+            background: #fff3cd;
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 30px;
+            border-left: 5px solid #ffc107;
+            font-size: 16px;
+        }
+
+        .sentences-container {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 15px;
+            margin-bottom: 30px;
+            min-height: 120px;
+        }
+
+        .sentences-title {
+            font-weight: bold;
+            color: #555;
+            margin-bottom: 15px;
+            font-size: 18px;
+        }
+
+        .sentence-item {
+            display: inline-block;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            padding: 12px 20px;
+            margin: 8px;
+            border-radius: 25px;
+            cursor: move;
+            user-select: none;
+            font-size: 16px;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+            transition: all 0.3s;
+        }
+
+        .sentence-item:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.6);
+        }
+
+        .sentence-item.dragging {
+            opacity: 0.5;
+        }
+
+        .drop-zones {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .drop-zone {
+            border: 3px dashed #ccc;
+            border-radius: 15px;
+            padding: 20px;
+            min-height: 300px;
+            transition: all 0.3s;
+        }
+
+        .drop-zone.drag-over {
+            border-color: #667eea;
+            background: #f0f4ff;
+            transform: scale(1.02);
+        }
+
+        .drop-zone-header {
+            font-size: 24px;
+            font-weight: bold;
+            text-align: center;
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 15px;
+            color: white;
+        }
+
+        .zone-tis {
+            border-color: #4caf50;
+        }
+
+        .zone-tis .drop-zone-header {
+            background: linear-gradient(135deg, #4caf50, #45a049);
+        }
+
+        .zone-tis.correct {
+            border-color: #4caf50;
+            background: #e8f5e9;
+        }
+
+        .zone-tis.incorrect {
+            border-color: #f44336;
+            background: #ffebee;
+        }
+
+        .zone-ton {
+            border-color: #2196f3;
+        }
+
+        .zone-ton .drop-zone-header {
+            background: linear-gradient(135deg, #2196f3, #1976d2);
+        }
+
+        .zone-ton.correct {
+            border-color: #2196f3;
+            background: #e3f2fd;
+        }
+
+        .zone-ton.incorrect {
+            border-color: #f44336;
+            background: #ffebee;
+        }
+
+        .dropped-item {
+            background: white;
+            color: #333;
+            padding: 12px 20px;
+            margin: 8px;
+            border-radius: 25px;
+            display: inline-block;
+            cursor: move;
+            border: 2px solid #667eea;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            transition: all 0.3s;
+        }
+
+        .dropped-item:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+        }
+
+        .dropped-item.correct {
+            border-color: #4caf50;
+            background: #e8f5e9;
+        }
+
+        .dropped-item.incorrect {
+            border-color: #f44336;
+            background: #ffebee;
+        }
+
+        .buttons {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            margin-top: 30px;
+        }
+
+        button {
+            padding: 15px 40px;
+            font-size: 18px;
+            border: none;
+            border-radius: 30px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-weight: bold;
+        }
+
+        .check-btn {
+            background: linear-gradient(135deg, #4caf50, #45a049);
+            color: white;
+            box-shadow: 0 4px 15px rgba(76, 175, 80, 0.4);
+        }
+
+        .check-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(76, 175, 80, 0.6);
+        }
+
+        .reset-btn {
+            background: linear-gradient(135deg, #ff9800, #f57c00);
+            color: white;
+            box-shadow: 0 4px 15px rgba(255, 152, 0, 0.4);
+        }
+
+        .reset-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(255, 152, 0, 0.6);
+        }
+
+        .result {
+            text-align: center;
+            padding: 20px;
+            border-radius: 15px;
+            font-size: 20px;
+            font-weight: bold;
+            margin-top: 20px;
+            display: none;
+        }
+
+        .result.show {
+            display: block;
+        }
+
+        .result.success {
+            background: #d4edda;
+            color: #155724;
+            border: 2px solid #c3e6cb;
+        }
+
+        .result.partial {
+            background: #fff3cd;
+            color: #856404;
+            border: 2px solid #ffeaa7;
+        }
+
+        .help-box {
+            background: #e3f2fd;
+            padding: 15px;
+            border-radius: 10px;
+            margin-top: 20px;
+            border-left: 5px solid #2196f3;
+        }
+
+        @media (max-width: 768px) {
+            .drop-zones {
+                grid-template-columns: 1fr;
+            }
+            
+            .container {
+                padding: 20px;
+            }
+            
+            h1 {
+                font-size: 24px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>📊 Ταξινόμησε τις προτάσεις</h1>
+        
+        <div class="instructions">
+            <strong>📝 Οδηγίες:</strong> Σύρε κάθε πρόταση στη σωστή κατηγορία! Όταν τελειώσεις, πάτησε "Έλεγχος" για να δεις αν τα πήγες καλά! 🎯
+        </div>
+
+        <div class="sentences-container" id="sentencesContainer">
+            <div class="sentences-title">🎈 Πρόσεχε τις προτάσεις παρακάτω:</div>
+            <div class="sentence-item" draggable="true" data-answer="tis">Βλέπω τις πεταλούδες στον κήπο</div>
+            <div class="sentence-item" draggable="true" data-answer="tis">Το βιβλίο της δασκάλας</div>
+            <div class="sentence-item" draggable="true" data-answer="tis">Καλώ τις φίλες μου</div>
+            <div class="sentence-item" draggable="true" data-answer="tis">Η κούκλα της αδερφής μου</div>
+            <div class="sentence-item" draggable="true" data-answer="tis">Πότισα τις γλάστρες</div>
+            <div class="sentence-item" draggable="true" data-answer="tis">Το σπίτι της θείας μου</div>
+        </div>
+
+        <div class="drop-zones">
+            <div class="drop-zone zone-tis" data-zone="tis">
+                <div class="drop-zone-header">
+                    ✅ Προτάσεις με «ΤΗΣ»<br>
+                    <span style="font-size: 16px; font-weight: normal;">(Τίνος;)</span>
+                </div>
+            </div>
+
+            <div class="drop-zone zone-ton" data-zone="ton">
+                <div class="drop-zone-header">
+                    ✅ Προτάσεις με «ΤΙΣ»<br>
+                    <span style="font-size: 16px; font-weight: normal;">(Ποιες;)</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="buttons">
+            <button class="check-btn" onclick="checkAnswers()">✓ Έλεγχος Απαντήσεων</button>
+            <button class="reset-btn" onclick="resetActivity()">🔄 Επανεκκίνηση</button>
+        </div>
+
+        <div class="result" id="result"></div>
+
+        <div class="help-box">
+            💡 <strong>Υπενθύμιση:</strong><br>
+            • <strong>«της»</strong> = γενική ενικού → Απαντά στην ερώτηση «Τίνος;»<br>
+            • <strong>«τις»</strong> = αιτιατική πληθυντικού → Απαντά στην ερώτηση «Ποιες;»
+        </div>
+    </div>
+
+    <script>
+        const correctAnswers = {
+            'Βλέπω τις πεταλούδες στον κήπο': 'ton',
+            'Το βιβλίο της δασκάλας': 'tis',
+            'Καλώ τις φίλες μου': 'ton',
+            'Η κούκλα της αδερφής μου': 'tis',
+            'Πότισα τις γλάστρες': 'ton',
+            'Το σπίτι της θείας μου': 'tis'
+        };
+
+        let draggedElement = null;
+
+        // Drag and Drop για αρχικά items
+        document.querySelectorAll('.sentence-item').forEach(item => {
+            item.addEventListener('dragstart', handleDragStart);
+            item.addEventListener('dragend', handleDragEnd);
+        });
+
+        // Drop zones
+        document.querySelectorAll('.drop-zone').forEach(zone => {
+            zone.addEventListener('dragover', handleDragOver);
+            zone.addEventListener('drop', handleDrop);
+            zone.addEventListener('dragleave', handleDragLeave);
+        });
+
+        // Sentences container για επιστροφή
+        document.getElementById('sentencesContainer').addEventListener('dragover', handleDragOver);
+        document.getElementById('sentencesContainer').addEventListener('drop', handleDrop);
+
+        function handleDragStart(e) {
+            draggedElement = this;
+            this.classList.add('dragging');
+            e.dataTransfer.effectAllowed = 'move';
+        }
+
+        function handleDragEnd(e) {
+            this.classList.remove('dragging');
+        }
+
+        function handleDragOver(e) {
+            e.preventDefault();
+            e.dataTransfer.dropEffect = 'move';
+            if (this.classList.contains('drop-zone')) {
+                this.classList.add('drag-over');
+            }
+        }
+
+        function handleDragLeave(e) {
+            if (this.classList.contains('drop-zone')) {
+                this.classList.remove('drag-over');
+            }
+        }
+
+        function handleDrop(e) {
+            e.preventDefault();
+            if (this.classList.contains('drop-zone')) {
+                this.classList.remove('drag-over');
+            }
+
+            if (draggedElement) {
+                // Μετατροπή σε dropped item αν δεν είναι ήδη
+                if (!draggedElement.classList.contains('dropped-item')) {
+                    draggedElement.classList.remove('sentence-item');
+                    draggedElement.classList.add('dropped-item');
+                }
+
+                // Αφαίρεση τυχόν προηγούμενων κλάσεων feedback
+                draggedElement.classList.remove('correct', 'incorrect');
+                
+                this.appendChild(draggedElement);
+                
+                // Κρύψιμο αποτελεσμάτων μετά από μετακίνηση
+                document.getElementById('result').classList.remove('show');
+            }
+        }
+
+        function checkAnswers() {
+            let correct = 0;
+            let total = 0;
+
+            // Reset όλων των ζωνών
+            document.querySelectorAll('.drop-zone').forEach(zone => {
+                zone.classList.remove('correct', 'incorrect');
+            });
+
+            // Έλεγχος για κάθε dropped item
+            document.querySelectorAll('.dropped-item').forEach(item => {
+                const text = item.textContent;
+                const parentZone = item.parentElement.dataset.zone;
+                const correctZone = correctAnswers[text];
+
+                total++;
+
+                if (parentZone === correctZone) {
+                    item.classList.add('correct');
+                    item.classList.remove('incorrect');
+                    correct++;
+                } else {
+                    item.classList.add('incorrect');
+                    item.classList.remove('correct');
+                }
+            });
+
+            // Έλεγχος αν όλα έχουν τοποθετηθεί
+            const remaining = document.querySelectorAll('#sentencesContainer .sentence-item, #sentencesContainer .dropped-item').length;
+            
+            const resultDiv = document.getElementById('result');
+            resultDiv.classList.add('show');
+
+            if (remaining > 0) {
+                resultDiv.className = 'result show partial';
+                resultDiv.innerHTML = `⚠️ Τοποθέτησε όλες τις προτάσεις πρώτα! Απομένουν ${remaining} προτάσεις.`;
+            } else if (correct === total) {
+                resultDiv.className = 'result show success';
+                resultDiv.innerHTML = `🎉 Συγχαρητήρια! Όλες οι απαντήσεις είναι σωστές! (${correct}/${total})`;
+                
+                // Πράσινο feedback στις ζώνες
+                document.querySelectorAll('.drop-zone').forEach(zone => {
+                    zone.classList.add('correct');
+                });
+            } else {
+                resultDiv.className = 'result show partial';
+                resultDiv.innerHTML = `💪 Καλή προσπάθεια! Σωστές: ${correct}/${total}. Προσπάθησε ξανά!`;
+            }
+        }
+
+        function resetActivity() {
+            // Επαναφορά όλων των items στο αρχικό container
+            const container = document.getElementById('sentencesContainer');
+            
+            document.querySelectorAll('.dropped-item').forEach(item => {
+                item.classList.remove('dropped-item', 'correct', 'incorrect');
+                item.classList.add('sentence-item');
+                container.appendChild(item);
+            });
+
+            // Reset ζωνών
+            document.querySelectorAll('.drop-zone').forEach(zone => {
+                zone.classList.remove('correct', 'incorrect');
+            });
+
+            // Κρύψιμο αποτελέσματος
+            document.getElementById('result').classList.remove('show');
+
+            // Re-enable drag για τα items
+            document.querySelectorAll('.sentence-item').forEach(item => {
+                item.draggable = true;
+                item.addEventListener('dragstart', handleDragStart);
+                item.addEventListener('dragend', handleDragEnd);
+            });
+        }
+    </script>
+</body>
+</html>
